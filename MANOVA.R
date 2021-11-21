@@ -93,3 +93,19 @@ T2I <- solve(((1/G1$G1.n)+(1/G2$G2.n))*Sd2) #matrice inverse du facteur du milie
 
 T2 <- Y%*%T2I%*%Ty
 T2
+
+#3.2.3 :Statistiques et conclusion
+
+Fobs <- ((n1+n2-3-1)/((n1+n2-2)*3))*T2
+Fobs
+
+pvalue <- df(Fobs,3,6)
+pvalue
+# 3.2.4 : Calcul du T² de Hotteling (sous H0) avec la fonction MANOVA
+
+model <- lm(cbind(x1, x2, x3) ~ fac, df)
+Manova(model, test.statistic = "Wilks")
+
+1- pf(Fobs,3,6, lower.tail = T)
+
+#4
