@@ -31,9 +31,9 @@ J <- matrix(1,nrow=N,ncol=N)
 X <- matrix(c(x1,x2,x3), nrow=10, byrow=F)
 
 m <- (1/N)%*%j%*%X
-colMeans(X)
+m
 s2 <- (1/(N-1))*(t(X)%*%X-t(X)%*%((1/N)*J)%*%X)
-
+s2
 # 3 - Développement de la méthode de comparaison
 # 3.1 : Calculs intermédiaires
 
@@ -71,8 +71,25 @@ G2 <- list(G2.data=d2,G2.mean=m2,G2.n=n2,G2.S2=s2d2)
 
 #création de la liste 
 L <- list(G1,G2)
-
+L
 
 #3.2 
 
-#TEST 
+#Test homogénéité
+
+
+
+#3.2.1 : Calcul Sd²
+
+Sd2 <- ((G1$G1.n -1)*G1$G1.S2 + (G2$G2.n-1)*G2$G2.S2)/(G1$G1.n+G2$G2.n-2)
+Sd2
+
+#3.2.2 :  Calcul du T² de Hotteling (sous H0)
+
+Ty <- t(m1-m2) #Transposé de (Y1 - Y2)
+Y  <- (m1-m2) #(Y1 - Y2)
+T2I <- solve(((1/G1$G1.n)+(1/G2$G2.n))*Sd2) #matrice inverse du facteur du milieu
+
+
+T2 <- Y%*%T2I%*%Ty
+T2
