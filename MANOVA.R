@@ -1,8 +1,10 @@
 # install.packages("rstatix")
+#install.packages("formattable")
+library(rstatix)
+library(formattable)
 
 # 1 - Introduction
 
-library(rstatix)
 
 x1  <- c(35,35,40,10,6,20,35,35,35,30)
 x2  <- c(3.5,4.9,3,2.8,2.7,2.8,4.6,10.9,8,1.6)
@@ -109,3 +111,7 @@ Manova(model, test.statistic = "Wilks")
 1- pf(Fobs,3,6, lower.tail = T)
 
 #4
+
+df2 <- data.frame(subset(iris, iris$Species != 'virginica'))
+df2$Species <- factor(df2$Species )
+
