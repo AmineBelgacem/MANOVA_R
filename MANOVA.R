@@ -40,8 +40,9 @@ s2
 # 3.1 : Calculs intermédiaires
 
 #On filtre notre data base en fonction de la colonne facreur
-d1 <- df %>% filter(fac ==1)
-d2 <- df %>% filter(fac ==2)
+
+d1 <- df %>% filter(fac == 1)
+d2 <- df %>% filter(fac == 2)
 
 #On transforme nos dataframes en matrices
 d1 <- matrix(c(d1$x1,d1$x2,d1$x3), nrow=5, byrow=F )
