@@ -175,15 +175,15 @@ pre code {
 ## 
 ##     filter</code></pre>
 <pre class="r"><code>library(formattable)</code></pre>
-<p>** 1 - Introduction</p>
+<ul>
+<li>1 - Introduction</li>
+</ul>
 <pre class="r"><code>x1  &lt;- c(35,35,40,10,6,20,35,35,35,30)
 x2  &lt;- c(3.5,4.9,3,2.8,2.7,2.8,4.6,10.9,8,1.6)
 x3  &lt;- c(2.8,2.7,4.38,3.21,2.73,2.81,2.88,2.9,3.28,3.2)
 fac &lt;-c(1,1,1,1,1,2,2,2,2,2)
 df  &lt;- data.frame(x1,x2,x3,fac)</code></pre>
-<ul>
-<li>Notre base de donnée</li>
-</ul>
+<p>Notre base de donnée</p>
 <pre class="r"><code>head(df)</code></pre>
 <pre><code>##   x1  x2   x3 fac
 ## 1 35 3.5 2.80   1
@@ -192,26 +192,22 @@ df  &lt;- data.frame(x1,x2,x3,fac)</code></pre>
 ## 4 10 2.8 3.21   1
 ## 5  6 2.7 2.73   1
 ## 6 20 2.8 2.81   2</code></pre>
-<ul>
-<li><ol style="list-style-type: decimal">
-<li>Transformation de la variable fac en facteur</li>
-</ol></li>
-</ul>
+<p>Transformation de la variable fac en facteur</p>
 <pre class="r"><code>df$fac &lt;- as.factor(df$fac) 
 k &lt;- nlevels(df$fac)
 k</code></pre>
 <pre><code>## [1] 2</code></pre>
-<ul>
-<li>Nombre de variables</li>
-</ul>
-<pre class="r"><code>n_var &lt;- ncol(df) - 1</code></pre>
-<ul>
-<li>Nombre d’observations</li>
-</ul>
+<p>Nombre de variables</p>
+<pre class="r"><code>n_var &lt;- ncol(df) - 1
+n_var</code></pre>
+<pre><code>## [1] 3</code></pre>
+<p>Nombre d’observations</p>
 <pre class="r"><code>N &lt;- nrow(df)
 N</code></pre>
 <pre><code>## [1] 10</code></pre>
-<p>** 2 - Calcul des moyennes et la matrice des variances covariances par multiplication matricielle</p>
+<ul>
+<li>2 - Calcul des moyennes et la matrice des variances covariances par multiplication matricielle</li>
+</ul>
 <pre class="r"><code>j &lt;- matrix(1,nrow=1,ncol=N)
 J &lt;- matrix(1,nrow=N,ncol=N)
 X &lt;- matrix(c(x1,x2,x3), nrow=10, byrow=F)
@@ -219,21 +215,20 @@ X &lt;- matrix(c(x1,x2,x3), nrow=10, byrow=F)
 m &lt;- (1/N)%*%j%*%X
 
 s2 &lt;- (1/(N-1))*(t(X)%*%X-t(X)%*%((1/N)*J)%*%X)</code></pre>
-<ul>
-<li>Moyenne</li>
-</ul>
+<p>Moyenne</p>
 <pre class="r"><code>m</code></pre>
 <pre><code>##      [,1] [,2]  [,3]
 ## [1,] 28.1 4.48 3.089</code></pre>
-<ul>
-<li>Matrice covariances</li>
-</ul>
+<p>Matrice covariances</p>
 <pre class="r"><code>s2</code></pre>
 <pre><code>##            [,1]       [,2]       [,3]
 ## [1,] 140.544444 13.9800000  1.9412222
 ## [2,]  13.980000  8.2284444 -0.1969111
 ## [3,]   1.941222 -0.1969111  0.2501211</code></pre>
-<p>** 3 - Développement de la méthode de comparaison * 3.1 : Calculs intermédiaires</p>
+<ul>
+<li>3 - Développement de la méthode de comparaison</li>
+<li>3.1 : Calculs intermédiaires</li>
+</ul>
 <p>On filtre notre data base en fonction de la colonne facteur</p>
 <pre class="r"><code>d1 &lt;- df %&gt;% filter(fac == 1)
 d2 &lt;- df %&gt;% filter(fac == 2)</code></pre>
@@ -265,9 +260,7 @@ J2 &lt;- matrix(1,nrow=n2,ncol=n2)</code></pre>
 <p>Calcul moyenne de nos sous dataframes</p>
 <pre class="r"><code>m1 &lt;- (1/n1)%*%j1%*%d1
 m2 &lt;- (1/n2)%*%j2%*%d2</code></pre>
-<ul>
-<li>Moyennes de nos sous datadrames :</li>
-</ul>
+<p>Moyennes de nos sous datadrames :</p>
 <pre class="r"><code>m1</code></pre>
 <pre><code>##      [,1] [,2]  [,3]
 ## [1,] 25.2 3.38 3.164</code></pre>
@@ -277,9 +270,7 @@ m2 &lt;- (1/n2)%*%j2%*%d2</code></pre>
 <p>Calcul matrice des variances covariances</p>
 <pre class="r"><code>s2d1 &lt;- (1/(n1-1))*(t(d1)%*%d1-t(d1)%*%((1/n1)*J1)%*%d1)
 s2d2 &lt;- (1/(n2-1))*(t(d2)%*%d2-t(d2)%*%((1/n2)*J2)%*%d2)</code></pre>
-<ul>
-<li>Matrice des variances covariances :</li>
-</ul>
+<p>Matrice des variances covariances :</p>
 <pre class="r"><code>s2d1</code></pre>
 <pre><code>##         [,1]     [,2]     [,3]
 ## [1,] 252.700  8.08000  4.37900
@@ -290,7 +281,7 @@ s2d2 &lt;- (1/(n2-1))*(t(d2)%*%d2-t(d2)%*%((1/n2)*J2)%*%d2)</code></pre>
 ## [1,] 42.5000 15.40000  0.53250
 ## [2,] 15.4000 14.67200 -0.00115
 ## [3,]  0.5325 -0.00115  0.04448</code></pre>
-<p>*Création de notre liste</p>
+<p>Création de notre liste</p>
 <pre class="r"><code>G1 &lt;- list(d1,m1,n1,s2d1)
 G1 &lt;- list(G1.data=d1,G1.mean=m1,G1.n=n1,G1.S2=s2d1)
 G2 &lt;- list(d2,m2,n2,s2d2)
@@ -401,8 +392,11 @@ head(df2)</code></pre>
 <ul>
 <li>Fonction :</li>
 </ul>
-<pre class="r"><code>  MANOVA_class &lt;- function(dfw)
+<pre class="r"><code>library(rstatix)
+  MANOVA_class &lt;- function(dfw)
 {
+  df2 &lt;- data.frame(subset(iris, iris$Species != &#39;virginica&#39;))
+  df2$Species &lt;- factor(df2$Species )
   #-&gt; détection automatique des variables numériques
   id_num &lt;- which(sapply(dfw, is.numeric))
   X &lt;- dfw[,id_num]
@@ -418,59 +412,70 @@ head(df2)</code></pre>
   #-&gt; variable factorielle
   dfw$fac &lt;- as.factor(dfw$fac) 
     
-  #-&gt; nb de facteur (= 2)
-  k &lt;- nlevels(dfw$fac)
-
-
   #  création de la liste
-  L &lt;-list()
-  for (i in 1:k){
-
-    #Index de la variable facteur 
-    IFac &lt;- which(names(dfw)==&quot;fac&quot;)
-    
-    n &lt;- nrow(data)
-    nom1   &lt;- paste0(&#39;G&#39;,i)
-    
-    data   &lt;- subset(df,fac==i)
-    data   &lt;- matrix(data[,-c(IFac)])
-    
-    #Nombre observation
-    n      &lt;- nrow(data)
-    
-    #Creation matrice j et J 
-    j      &lt;- matrix(1,nrow=1,ncol=n)
-    J      &lt;- matrix(1,nrow=n,ncol=n)
   
-    m      &lt;- apply(data,2,mean)
-    
-    Sd2    &lt;- apply(data,2,(1/(n-1))*(t(data)%*%data-t(data)%*%((1/N)*J)%*%data))
-    
-    
-    L[[nom1]] &lt;- list(&#39;data&#39; = data, &#39;moyenne&#39; = m, &#39;Variance&#39; = Sd2)
-    print(L)
-  }
+  L &lt;- lapply(levels(dfw$fac),function(x){
+    return(list(
+      &#39;data&#39;= subset(dfw,fac==x),
+      &#39;m&#39; = (1/nrow(subset(dfw,fac==x)))*matrix(1,ncol=nrow(subset(dfw,fac==x)),nrow=1,byrow=FALSE)%*%as.matrix(cbind(subset(dfw,fac==x)[,1:ncol(subset(dfw,fac==x))-1])), #on réalise le calcul de moyenne de façon matricielle
+      &#39;cov&#39; = (1/(nrow(subset(dfw,fac==x))-1))*(t(as.matrix(cbind(subset(dfw,fac==x)[,1:ncol(subset(dfw,fac==x))-1])))%*%as.matrix(cbind(subset(dfw,fac==x)[,1:ncol(subset(dfw,fac==x))-1])) - t(as.matrix(cbind(subset(dfw,fac==x)[,1:ncol(subset(dfw,fac==x))-1])))%*%((1/(nrow(subset(dfw,fac==x))))*matrix(1:1,ncol=nrow(subset(dfw,fac==x)),nrow=nrow(subset(dfw,fac==x)),byrow=FALSE))%*%as.matrix(cbind(subset(dfw,fac==x)[,1:ncol(subset(dfw,fac==x))-1]))),
+      #on réalise le calcul de variance-covariance de façon matricielle
+      &#39;n&#39; = nrow(subset(dfw,fac==x))
+    )
+    )
+  })
+  
+  L &lt;- setNames(L,c(&quot;G1&quot;,&quot;G2&quot;))
+  
+  
   # calcul de la variance commune
-  
+  Sd2 &lt;- as.matrix(((L$G1$n - 1)*L$G1$cov + (L$G2$n-1)*L$G2$cov)/(L$G1$n+L$G2$n-2))
   
   # matrice des différences des moyennes
+  Y  &lt;- matrix(L$G1$m-L$G2$m)
   
   # calcul du T2 de Hotteling
+  Ty &lt;- t(Y)
+  T2I &lt;- solve(((1/L$G1$n)+(1/L$G2$n))*Sd2) #matrice inverse du facteur    du milieu
+  T2 &lt;- Ty%*%T2I%*%Y
   
   # calcul de la p value
+  Fobs &lt;- ((L$G1$n + L$G2$n - (ncol(dfw)-1) - 1)/((L$G1$n + L$G2$n - 2)*(ncol(dfw)-1)))*T2
+  pvalue &lt;- df(Fobs,(ncol(dfw)-1),L$G1$n + L$G2$n - (ncol(dfw)-1) - 1)
   
   # les résultats sont stockés dans une liste
-  
   test_result        &lt;- data.frame(&#39;T² Hotteling&#39; = T2, &#39;Fobs&#39; = Fobs, &#39;p value&#39; = pvalue )
-  variance           &lt;- data.frame(Sd2) 
+  variance           &lt;- data.frame(Sd2)
   colnames(variance) &lt;- names(df)[id_num] ; rownames(variance) &lt;- names(df)[id_num]
-  class_mean         &lt;- data.frame(t(sapply(L, function(x){return(x$mean)})))
-  
+  class_mean         &lt;- data.frame(t(sapply(L, function(x){return(x$m)})))
+
   ret   &lt;- list(test = test_result, variance = variance, class_mean = class_mean)
-  
+
   return(ret)
   
-}</code></pre>
+  
+  }
+
+df2 &lt;- data.frame(subset(iris, iris$Species != &#39;virginica&#39;))
+df2$Species &lt;- factor(df2$Species )
+
+result &lt;- MANOVA_class(df2)
+print(result)</code></pre>
+<pre><code>## $test
+##   T².Hotteling     Fobs      p.value
+## 1     2580.839 625.4583 1.948245e-68
+## 
+## $variance
+##             x1         x2         x3        fac
+## x1  0.19534082 0.09220000 0.09962653 0.03305510
+## x2  0.09220000 0.12107959 0.04717551 0.02525102
+## x3  0.09962653 0.04717551 0.12548776 0.03958571
+## fac 0.03305510 0.02525102 0.03958571 0.02510612
+## 
+## $class_mean
+##       X1    X2    X3    X4
+## G1 5.006 3.428 1.462 0.246
+## G2 5.936 2.770 4.260 1.326</code></pre>
 
 
 

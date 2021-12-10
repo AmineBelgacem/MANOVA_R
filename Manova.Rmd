@@ -7,7 +7,7 @@ output: html_document
 library(rstatix)
 library(formattable)
 ```
-** 1 - Introduction
+* 1 - Introduction
 
 ```{r}
 x1  <- c(35,35,40,10,6,20,35,35,35,30)
@@ -16,30 +16,31 @@ x3  <- c(2.8,2.7,4.38,3.21,2.73,2.81,2.88,2.9,3.28,3.2)
 fac <-c(1,1,1,1,1,2,2,2,2,2)
 df  <- data.frame(x1,x2,x3,fac)
 ```
-* Notre base de donnée
+Notre base de donnée
 ```{r}
 head(df)
 ```
 
-*   1. Transformation de la variable fac en facteur
+Transformation de la variable fac en facteur
 
 ```{r}
 df$fac <- as.factor(df$fac) 
 k <- nlevels(df$fac)
 k
 ```
-* Nombre de variables
 
+Nombre de variables
 ```{r}
 n_var <- ncol(df) - 1
+n_var
 ```
 
-* Nombre d'observations 
+Nombre d'observations 
 ```{r}
 N <- nrow(df)
 N
 ```
-** 2 - Calcul des moyennes et la matrice des variances covariances par multiplication matricielle
+* 2 - Calcul des moyennes et la matrice des variances covariances par multiplication matricielle
 
 ```{r}
 j <- matrix(1,nrow=1,ncol=N)
@@ -50,16 +51,16 @@ m <- (1/N)%*%j%*%X
 
 s2 <- (1/(N-1))*(t(X)%*%X-t(X)%*%((1/N)*J)%*%X)
 ```
-* Moyenne
+Moyenne
 ```{r}
 m
 ```
-* Matrice covariances
+Matrice covariances
 ```{r}
 s2
 ```
 
-** 3 - Développement de la méthode de comparaison
+* 3 - Développement de la méthode de comparaison
 * 3.1 : Calculs intermédiaires
 
 On filtre notre data base en fonction de la colonne facteur
@@ -100,7 +101,7 @@ m2 <- (1/n2)%*%j2%*%d2
 
 ```
 
-* Moyennes de nos sous datadrames : 
+Moyennes de nos sous datadrames : 
 ```{r}
 m1
 m2
@@ -111,13 +112,13 @@ s2d1 <- (1/(n1-1))*(t(d1)%*%d1-t(d1)%*%((1/n1)*J1)%*%d1)
 s2d2 <- (1/(n2-1))*(t(d2)%*%d2-t(d2)%*%((1/n2)*J2)%*%d2)
 ```
 
-* Matrice des variances covariances :
+Matrice des variances covariances :
 ```{r}
 s2d1
 s2d2
 ```
 
-*Création de notre liste
+Création de notre liste
 ```{r}
 G1 <- list(d1,m1,n1,s2d1)
 G1 <- list(G1.data=d1,G1.mean=m1,G1.n=n1,G1.S2=s2d1)
@@ -180,8 +181,11 @@ head(df2)
 ```
  * Fonction :
 ```{r}
+library(rstatix)
   MANOVA_class <- function(dfw)
 {
+  df2 <- data.frame(subset(iris, iris$Species != 'virginica'))
+  df2$Species <- factor(df2$Species )
   #-> détection automatique des variables numériques
   id_num <- which(sapply(dfw, is.numeric))
   X <- dfw[,id_num]
@@ -197,60 +201,55 @@ head(df2)
   #-> variable factorielle
   dfw$fac <- as.factor(dfw$fac) 
     
-  #-> nb de facteur (= 2)
-  k <- nlevels(dfw$fac)
-
-
-  
   #  création de la liste
-  L <-list()
-  for (i in 1:k){
-
-    #Index de la variable facteur 
-    IFac <- which(names(dfw)=="fac")
-    
-    nom1   <- paste0('G',i)
-    
-    data   <- dfw %>% filter(fac == i)
-    data   <- data[,-c(IFac)]
-    
-    #Nombre observation
-    n <- nrow(data)
-
   
-    #Creation matrice j et J 
-    j      <- matrix(1,nrow=1,ncol=n)
-    J      <- matrix(1,nrow=n,ncol=n)
-    m      <- apply(data,2,mean)
-    
-    L[[nom1]] <- list('data' = data, 'moyenne' = m)
+  L <- lapply(levels(dfw$fac),function(x){
+    return(list(
+      'data'= subset(dfw,fac==x),
+      'm' = (1/nrow(subset(dfw,fac==x)))*matrix(1,ncol=nrow(subset(dfw,fac==x)),nrow=1,byrow=FALSE)%*%as.matrix(cbind(subset(dfw,fac==x)[,1:ncol(subset(dfw,fac==x))-1])), #on réalise le calcul de moyenne de façon matricielle comme réalisé dans la partie 2
+      'cov' = (1/(nrow(subset(dfw,fac==x))-1))*(t(as.matrix(cbind(subset(dfw,fac==x)[,1:ncol(subset(dfw,fac==x))-1])))%*%as.matrix(cbind(subset(dfw,fac==x)[,1:ncol(subset(dfw,fac==x))-1])) - t(as.matrix(cbind(subset(dfw,fac==x)[,1:ncol(subset(dfw,fac==x))-1])))%*%((1/(nrow(subset(dfw,fac==x))))*matrix(1:1,ncol=nrow(subset(dfw,fac==x)),nrow=nrow(subset(dfw,fac==x)),byrow=FALSE))%*%as.matrix(cbind(subset(dfw,fac==x)[,1:ncol(subset(dfw,fac==x))-1]))),
+      #on réalise le calcul de variance-covariance de façon matricielle comme réalisé dans la partie 2
+      'n' = nrow(subset(dfw,fac==x))
+    )
+    )
+  })
   
-  }
-  return(data)
+  L <- setNames(L,c("G1","G2"))
+  
+  
   # calcul de la variance commune
-  
+  Sd2 <- as.matrix(((L$G1$n - 1)*L$G1$cov + (L$G2$n-1)*L$G2$cov)/(L$G1$n+L$G2$n-2))
   
   # matrice des différences des moyennes
+  Y  <- matrix(L$G1$m-L$G2$m)
   
   # calcul du T2 de Hotteling
+  Ty <- t(Y)
+  T2I <- solve(((1/L$G1$n)+(1/L$G2$n))*Sd2) #matrice inverse du facteur    du milieu
+  T2 <- Ty%*%T2I%*%Y
   
   # calcul de la p value
+  Fobs <- ((L$G1$n + L$G2$n - (ncol(dfw)-1) - 1)/((L$G1$n + L$G2$n - 2)*(ncol(dfw)-1)))*T2
+  pvalue <- df(Fobs,(ncol(dfw)-1),L$G1$n + L$G2$n - (ncol(dfw)-1) - 1)
   
   # les résultats sont stockés dans une liste
+  test_result        <- data.frame('T² Hotteling' = T2, 'Fobs' = Fobs, 'p value' = pvalue )
+  variance           <- data.frame(Sd2)
+  colnames(variance) <- names(df)[id_num] ; rownames(variance) <- names(df)[id_num]
+  class_mean         <- data.frame(t(sapply(L, function(x){return(x$m)})))
+
+  ret   <- list(test = test_result, variance = variance, class_mean = class_mean)
+
+  return(ret)
   
-  # test_result        <- data.frame('T² Hotteling' = T2, 'Fobs' = Fobs, 'p value' = pvalue )
-  # variance           <- data.frame(Sd2) 
-  # colnames(variance) <- names(df)[id_num] ; rownames(variance) <- names(df)[id_num]
-  # class_mean         <- data.frame(t(sapply(L, function(x){return(x$mean)})))
-  # 
-  # ret   <- list(test = test_result, variance = variance, class_mean = class_mean)
-  # 
-  # return(ret)
   
   }
 
+df2 <- data.frame(subset(iris, iris$Species != 'virginica'))
+df2$Species <- factor(df2$Species )
+
 result <- MANOVA_class(df2)
-result
+print(result)
 ```
 
 
