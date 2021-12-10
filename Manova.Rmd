@@ -252,4 +252,15 @@ result <- MANOVA_class(df2)
 print(result)
 ```
 
+```{r}
+format_table(result$test) 
+```
+
+```{r}
+format_table(result$variance) 
+```
+
+```{r}
+format_table(result$class_mean) 
+```
 
